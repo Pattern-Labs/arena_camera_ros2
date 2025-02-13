@@ -8,7 +8,6 @@ services:
       - .:/arena_camera_ros2
 
     network_mode: host
-    command:
-      ["bash"]
+    entrypoint: "sleep infinity"
     # lucid devices container can see
       #  ["/ArenaSDK_Linux_x64/precompiledExamples/./IpConfigUtility", "/list"]

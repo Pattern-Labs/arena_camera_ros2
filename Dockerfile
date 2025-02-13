@@ -5,9 +5,24 @@
 #https://hub.docker.com/layers/osrf/ros/eloquent-desktop/images/sha256-742948bc521573ff962f5a7f084ba1562a319e547c3938603f8dff5d33d3466e?context=explore
 FROM osrf/ros:eloquent-desktop
 RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    git cmake curl wget unzip ninja-build ca-certificates \
+    gnupg gnupg2 lsb-release openjdk-8-jdk\
+    python3-dev python3-pip python3-numpy python3-matplotlib python3-empy python3-tk \
+    ros-eloquent-ament-cmake-clang-format \
+    ros-eloquent-ament-cmake \
     && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
+# Add Kitware APT repository for latest CMake
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt-transport-https ca-certificates gnupg software-properties-common && \
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add - && \
+    apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
+    apt-get update && apt-get install -y cmake && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN cmake --version
 # ARGS might want to change ---------------------------------------------------
 
 # ArenaSDK tar file on parent the host relative to the build context; it must contain the ArenaSDK .tar.gz file
@@ -32,13 +47,18 @@ ARG arena_api_parent=/arena_api
 # install ArenaSDK ------------------------------------------------------------
 
 # copy binraies from host into root
-ADD ${arenasdk_root_on_host}/*.tar.gz ${arenasdk_parent}
+COPY ${arenasdk_root_on_host}/ArenaSDK_v0.1.91_Linux_x64.tar.gz ${arenasdk_parent}
 
 # copy isntallation script from host into ArenSDK root
 ADD ${arenasdk_root_on_host}/*.sh ${arenasdk_root}
 
-# run installation script(s) to install ArenaSDK
-RUN for sh_script in `ls ${arenasdk_root}/*.sh`; do sh -c $sh_script; done
+RUN tar -xvf /ArenaSDK_v0.1.91_Linux_x64.tar.gz -C ${arenasdk_parent}
+
+WORKDIR ${arenasdk_root}
+
+RUN /bin/bash -c "sh Arena_SDK_Linux_x64.conf"
+
+RUN /bin/bash -c "export ARENA_ROOT=${arenasdk_root}"
 
 # install arena_api whl -------------------------------------------------------
 
@@ -59,6 +79,7 @@ ADD ./arena_camera_ros_entrypoint.sh /
 #RUN chmod 777 /arena_camera_ros_entrypoint.sh
 
 ENTRYPOINT [ "/arena_camera_ros_entrypoint.sh" ]
-#CMD ["bash"]
 
 WORKDIR /arena_camera_ros2/ros2_ws
+RUN chmod 777 -R /arena_camera_ros2/ros2_ws
+
