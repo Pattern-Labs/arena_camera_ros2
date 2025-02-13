@@ -17,15 +17,15 @@ void ArenaCameraNode::parse_parameters_()
   try {
     nextParameterToDeclare = "serial";
     if (this->has_parameter("serial")) {
-        int serial_integer;
-        this->get_parameter<int>("serial", serial_integer);
-        serial_ = std::to_string(serial_integer);
-        is_passed_serial_ = true;
-} else {
-    serial_ = ""; // Set it to an empty string to indicate it's not passed.
-    is_passed_serial_ = false;
-}
-    
+      int serial_integer;
+      this->get_parameter<int>("serial", serial_integer);
+      serial_ = std::to_string(serial_integer);
+      is_passed_serial_ = true;
+    } else {
+      serial_ = "";  // Set it to an empty string to indicate it's not passed.
+      is_passed_serial_ = false;
+    }
+
     nextParameterToDeclare = "pixelformat";
     pixelformat_ros_ = this->declare_parameter("pixelformat", "");
     is_passed_pixelformat_ros_ = pixelformat_ros_ != "";
@@ -426,10 +426,12 @@ void ArenaCameraNode::set_nodes_()
   set_nodes_exposure_();
   set_nodes_trigger_mode_();
   // configure Auto Negotiate Packet Size and Packet Resend
-  Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(), "StreamAutoNegotiatePacketSize", True);
-  Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(), "StreamPacketResendEnable", True);
+  Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(),
+                            "StreamAutoNegotiatePacketSize", true);
+  Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(),
+                            "StreamPacketResendEnable", true);
 
-  //set_nodes_test_pattern_image_();
+  // set_nodes_test_pattern_image_();
 }
 
 void ArenaCameraNode::set_nodes_load_default_profile_()
