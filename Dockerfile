@@ -85,7 +85,7 @@ RUN for whl_package in `ls ${arena_api_parent}/*.whl`; do pip3 install $whl_pack
 ADD ./arena_camera_ros_entrypoint.sh /
 #RUN chmod 777 /arena_camera_ros_entrypoint.sh
 
-ENTRYPOINT [ "/arena_camera_ros_entrypoint.sh" ]
 
 WORKDIR /arena_camera_ros2/ros2_ws
+RUN colcon build --symlink-install
 
