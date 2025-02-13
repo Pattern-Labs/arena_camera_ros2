@@ -5,7 +5,11 @@
 #https://hub.docker.com/layers/osrf/ros/eloquent-desktop/images/sha256-742948bc521573ff962f5a7f084ba1562a319e547c3938603f8dff5d33d3466e?context=explore
 FROM osrf/ros:eloquent-desktop
 # Used for install gcc-9 and libstdc++6 required for GLIBCXX_3.4.26 for the ArenaSDK
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y
+RUN apt-get update && \
+    apt-get install software-properties-common -y && \
+    add-apt-repository ppa:ubuntu-toolchain-r/test -y
+
+# Install packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     git cmake curl wget unzip ninja-build ca-certificates vim \
