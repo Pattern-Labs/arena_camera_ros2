@@ -5,6 +5,7 @@
 
 // from std_srvs.srv import Trigger
 #include <chrono>
+
 #include "rclcpp/client.hpp"
 #include "std_srvs/srv/trigger.hpp"
 
@@ -38,7 +39,7 @@ class TriggerArenaImageClientNode : public rclcpp::Node
   void send_request()
   {
     auto req_ = std::make_shared<std_srvs::srv::Trigger::Request>();
-    m_result = m_cli_->async_send_request(req_).future.share();
+    m_result = m_cli_->async_send_request(req_);
   }
 
   std::shared_future<std::shared_ptr<std_srvs::srv::Trigger_Response>> m_result;
@@ -73,7 +74,7 @@ int main(int argc, char** argv)
   client_node->send_request();
   // Wait for the result.
   if (rclcpp::spin_until_future_complete(client_node, client_node->m_result) ==
-      rclcpp::FutureReturnCode::SUCCESS) {
+      rclcpp::executor::FutureReturnCode::SUCCESS) {
     auto response = client_node->m_result.get();
     if (response->success) {
       client_node->log_info(std::string("SUCCESS : ") + response->message);

@@ -1,14 +1,9 @@
-version: "3.2"
 services:
-  development:
+  lucid_driver:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - .:/arena_camera_ros2
-
     network_mode: host
-    command:
-      ["bash"]
-    # lucid devices container can see
-      #  ["/ArenaSDK_Linux_x64/precompiledExamples/./IpConfigUtility", "/list"]
+    entrypoint: ["/bin/bash", "-c", " source /opt/ros/eloquent/setup.bash && source ./install/setup.bash && ros2 run arena_camera_node start --ros-args -p serial:=${SERIAL_NUMBER:-240302225}"]
