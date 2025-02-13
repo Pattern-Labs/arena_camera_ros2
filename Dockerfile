@@ -6,7 +6,7 @@
 FROM osrf/ros:eloquent-desktop
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    git cmake curl wget unzip ninja-build ca-certificates \
+    git cmake curl wget unzip ninja-build ca-certificates vim \
     gnupg gnupg2 lsb-release openjdk-8-jdk\
     python3-dev python3-pip python3-numpy python3-matplotlib python3-empy python3-tk \
     ros-eloquent-ament-cmake-clang-format \
