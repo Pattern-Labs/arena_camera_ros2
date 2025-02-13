@@ -8,6 +8,4 @@ services:
       - .:/arena_camera_ros2
 
     network_mode: host
-    entrypoint: "sleep infinity"
-    # lucid devices container can see
-      #  ["/ArenaSDK_Linux_x64/precompiledExamples/./IpConfigUtility", "/list"]
+    entrypoint: ros2 run arena_camera_node start --ros-args -p serial:="${SERIAL_NUMBER:240302225}"

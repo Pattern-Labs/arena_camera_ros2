@@ -88,5 +88,4 @@ ADD ./arena_camera_ros_entrypoint.sh /
 ENTRYPOINT [ "/arena_camera_ros_entrypoint.sh" ]
 
 WORKDIR /arena_camera_ros2/ros2_ws
-RUN chmod 777 -R /arena_camera_ros2/ros2_ws
 
