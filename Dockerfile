@@ -87,5 +87,6 @@ ADD ./arena_camera_ros_entrypoint.sh /
 
 
 WORKDIR /arena_camera_ros2/ros2_ws
-RUN colcon build --symlink-install
+COPY ros2_ws/src ros2_ws/src
+RUN ["/bin/bash", "-c", " source /opt/ros/eloquent/setup.bash && colcon build --symlink-install"]
 
