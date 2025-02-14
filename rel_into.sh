@@ -11,7 +11,7 @@ xhost +local:root 1>/dev/null 2>&1
 
 docker exec \
     -e DISPLAY=${DISPLAY_ENV} \
-    -it apollo \
+    -it arena_camera_ros2-lucid_driver-1 \
     bash -c "xauth add localhost:${DISPLAY_NUM} ${XAUTH_COOKIE} && /bin/bash"
 
 xhost -local:root 1>/dev/null 2>&1
