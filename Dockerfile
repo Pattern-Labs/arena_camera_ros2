@@ -4,25 +4,43 @@
 # linux/amd64 only for now
 #https://hub.docker.com/layers/osrf/ros/eloquent-desktop/images/sha256-742948bc521573ff962f5a7f084ba1562a319e547c3938603f8dff5d33d3466e?context=explore
 FROM osrf/ros:eloquent-desktop
+
+
+RUN rm -f /etc/apt/sources.list.d/ros*.list && \
+    rm -f /etc/apt/trusted.gpg.d/ros* || true
+
+
+RUN sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+# Disable broken ROS sources before first apt update
+#RUN mv /etc/apt/sources.list.d/ros2-latest.list /etc/apt/sources.list.d/ros2-latest.list.disabled || true && \
+#    rm -f /etc/apt/trusted.gpg.d/ros* && \
+#    apt-get update && apt-get install -y curl gnupg2 lsb-release# Add the updated ROS key and repo using signed-by
+#RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+#    -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+#    echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -sc) main" \
+#    > /etc/apt/sources.list.d/ros2.list
+
+
 # Used for install gcc-9 and libstdc++6 required for GLIBCXX_3.4.26 for the ArenaSDK
-RUN apt-get update && \
-    apt-get install software-properties-common -y && \
+RUN apt-get update --allow-insecure-repositories && \
+    apt-get install software-properties-common -y --allow-unauthenticated && \
     add-apt-repository ppa:ubuntu-toolchain-r/test -y
 
 # Install packages
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-insecure-repositories \
+    && apt-get install -y --no-install-recommends --allow-unauthenticated \
     git cmake curl wget unzip ninja-build ca-certificates vim xauth \
     gnupg gnupg2 lsb-release openjdk-8-jdk\
     python3-dev python3-pip python3-numpy python3-matplotlib python3-empy python3-tk \
-    ros-eloquent-ament-cmake-clang-format \
-    ros-eloquent-ament-cmake \
+#    ros-eloquent-ament-cmake-clang-format \
+#    ros-eloquent-ament-cmake \
     gcc-9 libstdc++6 \
     && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Add Kitware APT repository for latest CMake
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-insecure-repositories && apt-get install -y --no-install-recommends --allow-unauthenticated \
     apt-transport-https ca-certificates gnupg software-properties-common && \
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add - && \
     apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
