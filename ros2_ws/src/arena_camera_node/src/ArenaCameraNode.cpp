@@ -67,6 +67,21 @@ void ArenaCameraNode::parse_parameters_()
     pub_qos_reliability_ = this->declare_parameter("qos_reliability", "");
     is_passed_pub_qos_reliability_ = pub_qos_reliability_ != "";
 
+    nextParameterToDeclare = "binning_selector";
+    binning_selector_ = this->declare_parameter("binning_selector", "");
+    is_passed_binning_selector_ = binning_selector_ != "";
+
+    nextParameterToDeclare = "binning_horizontal";
+    size_t binning_horizontal =
+        this->declare_parameter("binning_horizontal", 1);
+    binning_horizontal_ = binning_horizontal;
+    is_passed_binning_horizontal_ = binning_horizontal > 0;
+
+    nextParameterToDeclare = "binning_vertical";
+    size_t binning_vertical = this->declare_parameter("binning_vertical", 1);
+    binning_vertical_ = binning_vertical;
+    is_passed_binning_vertical_ = binning_vertical > 0;
+
   } catch (rclcpp::ParameterTypeException& e) {
     log_err(nextParameterToDeclare + " argument");
     throw;
@@ -425,6 +440,7 @@ void ArenaCameraNode::set_nodes_()
   set_nodes_pixelformat_();
   set_nodes_exposure_();
   set_nodes_trigger_mode_();
+  set_nodes_binning_();
   // configure Auto Negotiate Packet Size and Packet Resend
   Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(),
                             "StreamAutoNegotiatePacketSize", true);
@@ -560,6 +576,28 @@ void ArenaCameraNode::set_nodes_trigger_mode_()
   else {
     Arena::SetNodeValue<GenICam::gcstring>(nodemap, "TriggerMode", "Off");
   }
+}
+
+void ArenaCameraNode::set_nodes_binning_()
+{
+  auto nodemap = m_pDevice->GetNodeMap();
+  if (is_passed_binning_selector_) {
+    Arena::SetNodeValue<GenICam::gcstring>(nodemap, "BinningSelector",
+                                           binning_selector_);
+    log_info(std::string("\tBinning selector set to ") + binning_selector_);
+  }
+  if (is_passed_binning_horizontal_) {
+    Arena::SetNodeValue<int>(nodemap, "BinningHorizontal", binning_horizontal_);
+    log_info(std::string("\tBinning horizontal set to ") +
+             std::to_string(binning_horizontal_));
+  }
+  if (is_passed_binning_vertical_) {
+    Arena::SetNodeValue<int>(nodemap, "BinningVertical", binning_vertical_);
+    log_info(std::string("\tBinning vertical set to ") +
+             std::to_string(binning_vertical_));
+  }
+
+  log_info("\tBinning mode set to Average for both Horizontal and Vertical");
 }
 
 // just for debugging

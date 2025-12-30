@@ -8,7 +8,8 @@
 //
 
 // std
-#include <chrono>      //chrono_literals
+#include <chrono>  //chrono_literals
+#include <cstddef>
 #include <functional>  // std::bind , std::placeholders
 
 // ros
@@ -39,10 +40,22 @@ class ArenaCameraNode : public rclcpp::Node
     log_info(std::string("Destroying \"") + this->get_name() + "\" node");
   }
 
-  void log_debug(std::string msg) { RCLCPP_DEBUG(this->get_logger(), msg.c_str()); };
-  void log_info(std::string msg) { RCLCPP_INFO(this->get_logger(), msg.c_str()); };
-  void log_warn(std::string msg) { RCLCPP_WARN(this->get_logger(), msg.c_str()); };
-  void log_err(std::string msg) { RCLCPP_ERROR(this->get_logger(), msg.c_str()); };
+  void log_debug(std::string msg)
+  {
+    RCLCPP_DEBUG(this->get_logger(), msg.c_str());
+  };
+  void log_info(std::string msg)
+  {
+    RCLCPP_INFO(this->get_logger(), msg.c_str());
+  };
+  void log_warn(std::string msg)
+  {
+    RCLCPP_WARN(this->get_logger(), msg.c_str());
+  };
+  void log_err(std::string msg)
+  {
+    RCLCPP_ERROR(this->get_logger(), msg.c_str());
+  };
 
  private:
   std::shared_ptr<Arena::ISystem> m_pSystem;
@@ -83,6 +96,15 @@ class ArenaCameraNode : public rclcpp::Node
 
   std::string pub_qos_reliability_;
   bool is_passed_pub_qos_reliability_;
+
+  std::string binning_selector_;
+  bool is_passed_binning_selector_{false};
+
+  size_t binning_horizontal_{1};
+  bool is_passed_binning_horizontal_{false};
+
+  size_t binning_vertical_{1};
+  bool is_passed_binning_vertical_{false};
 
   void parse_parameters_();
   void initialize_();
