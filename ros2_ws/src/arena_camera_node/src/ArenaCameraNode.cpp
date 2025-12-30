@@ -583,7 +583,7 @@ void ArenaCameraNode::set_nodes_binning_()
   auto nodemap = m_pDevice->GetNodeMap();
   if (is_passed_binning_selector_) {
     Arena::SetNodeValue<GenICam::gcstring>(nodemap, "BinningSelector",
-                                           binning_selector_);
+                                           binning_selector_.c_str());
     log_info(std::string("\tBinning selector set to ") + binning_selector_);
   }
   if (is_passed_binning_horizontal_) {
