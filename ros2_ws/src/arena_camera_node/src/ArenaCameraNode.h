@@ -122,6 +122,7 @@ class ArenaCameraNode : public rclcpp::Node
   void set_nodes_pixelformat_();
   void set_nodes_exposure_();
   void set_nodes_trigger_mode_();
+  void set_nodes_binning_();
   void set_nodes_test_pattern_image_();
   void publish_images_();
 
