@@ -82,6 +82,14 @@ void ArenaCameraNode::parse_parameters_()
     binning_vertical_ = binning_vertical;
     is_passed_binning_vertical_ = binning_vertical > 0;
 
+    nextParameterToDeclare = "offset_x";
+    offset_x_ = this->declare_parameter("offset_x", 0);
+    is_passed_offset_x_ = offset_x_ > 0;
+
+    nextParameterToDeclare = "offset_y";
+    offset_y_ = this->declare_parameter("offset_y", 0);
+    is_passed_offset_y_ = offset_y_ > 0;
+
   } catch (rclcpp::ParameterTypeException& e) {
     log_err(nextParameterToDeclare + " argument");
     throw;
@@ -441,6 +449,7 @@ void ArenaCameraNode::set_nodes_()
   set_nodes_exposure_();
   set_nodes_trigger_mode_();
   set_nodes_binning_();
+  set_nodes_offset_();
   // configure Auto Negotiate Packet Size and Packet Resend
   Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(),
                             "StreamAutoNegotiatePacketSize", true);
@@ -599,6 +608,19 @@ void ArenaCameraNode::set_nodes_binning_()
   }
 
   log_info("\tBinning mode set to Average for both Horizontal and Vertical");
+}
+
+void ArenaCameraNode::set_nodes_offset_()
+{
+  auto nodemap = m_pDevice->GetNodeMap();
+  if (is_passed_offset_x_) {
+    Arena::SetNodeValue<int64_t>(nodemap, "OffsetX", offset_x_);
+    log_info(std::string("\tOffset X set to ") + std::to_string(offset_x_));
+  }
+  if (is_passed_offset_y_) {
+    Arena::SetNodeValue<int64_t>(nodemap, "OffsetY", offset_y_);
+    log_info(std::string("\tOffset Y set to ") + std::to_string(offset_y_));
+  }
 }
 
 // just for debugging
