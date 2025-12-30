@@ -238,11 +238,14 @@ void ArenaCameraNode::wait_for_device_timer_callback_()
   if (!device_infos.size()) {
     log_info("No arena camera is connected. Waiting for device(s)...");
   }
-  // at least on is found
+  // at least one is found
   else {
     m_wait_for_device_timer_callback_->cancel();
     log_info(std::to_string(device_infos.size()) +
-             " arena device(s) has been discoved.");
+             " arena device(s) has been discovered.");
+    for (auto device : device_infos) {
+      log_info(DeviceInfoHelper::info(device));
+    }
     run_();
   }
 }
@@ -272,8 +275,8 @@ void ArenaCameraNode::publish_images_()
 
       m_pub_->publish(std::move(p_image_msg));
 
-      log_info(std::string("image ") + std::to_string(pImage->GetFrameId()) +
-               " published to " + topic_);
+      // log_info(std::string("image ") + std::to_string(pImage->GetFrameId()) +
+      //          " published to " + topic_);
       this->m_pDevice->RequeueBuffer(pImage);
 
     } catch (std::exception& e) {
