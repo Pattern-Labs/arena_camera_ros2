@@ -90,6 +90,12 @@ void ArenaCameraNode::parse_parameters_()
     offset_y_ = this->declare_parameter("offset_y", 0);
     is_passed_offset_y_ = offset_y_ > 0;
 
+    nextParameterToDeclare = "use_ptp";
+    use_ptp_ = this->declare_parameter("use_ptp", true);
+
+    nextParameterToDeclare = "is_master";
+    is_master_ = this->declare_parameter("is_master", false);
+
   } catch (rclcpp::ParameterTypeException& e) {
     log_err(nextParameterToDeclare + " argument");
     throw;
@@ -621,6 +627,17 @@ void ArenaCameraNode::set_nodes_offset_()
     Arena::SetNodeValue<int64_t>(nodemap, "OffsetY", offset_y_);
     log_info(std::string("\tOffset Y set to ") + std::to_string(offset_y_));
   }
+}
+
+void ArenaCameraNode::set_nodes_ptp_()
+{
+  auto nodemap = m_pDevice->GetNodeMap();
+  Arena::SetNodeValue<bool>(nodemap, "PtpEnable", use_ptp_);
+  Arena::SetNodeValue<bool>(nodemap, "PtpSlaveOnly", !is_master_);
+
+  log_info(std::string("\tPtpEnable set to ") + (use_ptp_ ? "On" : "Off"));
+  log_info(std::string("\tPtpSlaveOnly set to ") +
+           (!is_master_ ? "On" : "Off"));
 }
 
 // just for debugging

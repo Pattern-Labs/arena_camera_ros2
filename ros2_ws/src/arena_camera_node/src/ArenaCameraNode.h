@@ -112,6 +112,10 @@ class ArenaCameraNode : public rclcpp::Node
   size_t offset_y_;
   bool is_passed_offset_y_{false};
 
+  bool use_ptp_{false};
+
+  bool is_master_{true};
+
   void parse_parameters_();
   void initialize_();
 
@@ -130,6 +134,7 @@ class ArenaCameraNode : public rclcpp::Node
   void set_nodes_trigger_mode_();
   void set_nodes_binning_();
   void set_nodes_offset_();
+  void set_nodes_ptp_();
   void set_nodes_test_pattern_image_();
   void publish_images_();
 
