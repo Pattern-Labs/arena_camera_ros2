@@ -1,5 +1,6 @@
 services:
   lucid_driver:
+    image: arena_camera_ros2-lucid_driver
     build:
       context: .
       dockerfile: Dockerfile
