@@ -587,12 +587,13 @@ void ArenaCameraNode::set_nodes_binning_()
     log_info(std::string("\tBinning selector set to ") + binning_selector_);
   }
   if (is_passed_binning_horizontal_) {
-    Arena::SetNodeValue<int>(nodemap, "BinningHorizontal", binning_horizontal_);
+    Arena::SetNodeValue<int64_t>(nodemap, "BinningHorizontal",
+                                 binning_horizontal_);
     log_info(std::string("\tBinning horizontal set to ") +
              std::to_string(binning_horizontal_));
   }
   if (is_passed_binning_vertical_) {
-    Arena::SetNodeValue<int>(nodemap, "BinningVertical", binning_vertical_);
+    Arena::SetNodeValue<int64_t>(nodemap, "BinningVertical", binning_vertical_);
     log_info(std::string("\tBinning vertical set to ") +
              std::to_string(binning_vertical_));
   }
