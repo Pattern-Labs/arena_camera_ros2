@@ -440,7 +440,10 @@ Arena::IDevice* ArenaCameraNode::create_device_ros_()
 
   auto index = 0;
   if (is_passed_serial_) {
+    log_info("Searching for device with serial: " + serial_);
     index = DeviceInfoHelper::get_index_of_serial(device_infos, serial_);
+  } else {
+    log_info("No serial number was provided. Using the first device.");
   }
 
   auto pDevice = m_pSystem->CreateDevice(device_infos.at(index));
