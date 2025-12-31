@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <cstring>    // memcopy
 #include <stdexcept>  // std::runtime_err
 #include <string>
@@ -654,14 +655,12 @@ void ArenaCameraNode::set_nodes_reverse_()
 {
   auto nodemap = m_pDevice->GetNodeMap();
   if (is_passed_reverse_x_) {
-    Arena::SetNodeValue<GenICam::gcstring>(nodemap, "ReverseX",
-                                           reverse_x_ == 1 ? "On" : "Off");
+    Arena::SetNodeValue<int64_t>(nodemap, "ReverseX", reverse_x_);
     log_info(std::string("\tReverse X set to ") +
              (reverse_x_ == 1 ? "On" : "Off"));
   }
   if (is_passed_reverse_y_) {
-    Arena::SetNodeValue<GenICam::gcstring>(nodemap, "ReverseY",
-                                           reverse_y_ == 1 ? "On" : "Off");
+    Arena::SetNodeValue<int64_t>(nodemap, "ReverseY", reverse_y_);
     log_info(std::string("\tReverse Y set to ") +
              (reverse_y_ == 1 ? "On" : "Off"));
   }
