@@ -92,12 +92,12 @@ void ArenaCameraNode::parse_parameters_()
     is_master_ = this->declare_parameter("is_master", false);
 
     nextParameterToDeclare = "reverse_x";
-    reverse_x_ = this->declare_parameter("reverse_x", 0);
-    is_passed_reverse_x_ = reverse_x_ != 0;
+    reverse_x_ = this->declare_parameter("reverse_x", false);
+    is_passed_reverse_x_ = reverse_x_;
 
     nextParameterToDeclare = "reverse_y";
-    reverse_y_ = this->declare_parameter("reverse_y", 0);
-    is_passed_reverse_y_ = reverse_y_ != 0;
+    reverse_y_ = this->declare_parameter("reverse_y", false);
+    is_passed_reverse_y_ = reverse_y_;
 
   } catch (rclcpp::ParameterTypeException& e) {
     log_err(nextParameterToDeclare + " argument");
@@ -655,14 +655,12 @@ void ArenaCameraNode::set_nodes_reverse_()
 {
   auto nodemap = m_pDevice->GetNodeMap();
   if (is_passed_reverse_x_) {
-    Arena::SetNodeValue<int64_t>(nodemap, "ReverseX", reverse_x_);
-    log_info(std::string("\tReverse X set to ") +
-             (reverse_x_ == 1 ? "On" : "Off"));
+    Arena::SetNodeValue<bool>(nodemap, "ReverseX", reverse_x_);
+    log_info(std::string("\tReverse X set to ") + (reverse_x_ ? "On" : "Off"));
   }
   if (is_passed_reverse_y_) {
-    Arena::SetNodeValue<int64_t>(nodemap, "ReverseY", reverse_y_);
-    log_info(std::string("\tReverse Y set to ") +
-             (reverse_y_ == 1 ? "On" : "Off"));
+    Arena::SetNodeValue<bool>(nodemap, "ReverseY", reverse_y_);
+    log_info(std::string("\tReverse Y set to ") + (reverse_y_ ? "On" : "Off"));
   }
 }
 

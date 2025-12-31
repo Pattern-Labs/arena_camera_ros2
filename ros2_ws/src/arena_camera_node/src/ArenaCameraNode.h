@@ -116,9 +116,9 @@ class ArenaCameraNode : public rclcpp::Node
 
   bool is_master_{true};
 
-  int reverse_x_{0};
+  bool reverse_x_{false};
   bool is_passed_reverse_x_{false};
-  int reverse_y_{0};
+  bool reverse_y_{false};
   bool is_passed_reverse_y_{false};
 
   void parse_parameters_();
