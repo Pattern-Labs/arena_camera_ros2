@@ -90,6 +90,14 @@ void ArenaCameraNode::parse_parameters_()
     nextParameterToDeclare = "is_master";
     is_master_ = this->declare_parameter("is_master", false);
 
+    nextParameterToDeclare = "reverse_x";
+    reverse_x_ = this->declare_parameter("reverse_x", 0);
+    is_passed_reverse_x_ = reverse_x_ != 0;
+
+    nextParameterToDeclare = "reverse_y";
+    reverse_y_ = this->declare_parameter("reverse_y", 0);
+    is_passed_reverse_y_ = reverse_y_ != 0;
+
   } catch (rclcpp::ParameterTypeException& e) {
     log_err(nextParameterToDeclare + " argument");
     throw;
@@ -457,6 +465,7 @@ void ArenaCameraNode::set_nodes_()
   set_nodes_binning_();
   set_nodes_offset_();
   set_nodes_ptp_();
+  set_nodes_reverse_();
   // configure Auto Negotiate Packet Size and Packet Resend
   Arena::SetNodeValue<bool>(m_pDevice->GetTLStreamNodeMap(),
                             "StreamAutoNegotiatePacketSize", true);
@@ -639,6 +648,23 @@ void ArenaCameraNode::set_nodes_ptp_()
   log_info(std::string("\tPtpEnable set to ") + (use_ptp_ ? "On" : "Off"));
   log_info(std::string("\tPtpSlaveOnly set to ") +
            (!is_master_ ? "On" : "Off"));
+}
+
+void ArenaCameraNode::set_nodes_reverse_()
+{
+  auto nodemap = m_pDevice->GetNodeMap();
+  if (is_passed_reverse_x_) {
+    Arena::SetNodeValue<GenICam::gcstring>(nodemap, "ReverseX",
+                                           reverse_x_ == 1 ? "On" : "Off");
+    log_info(std::string("\tReverse X set to ") +
+             (reverse_x_ == 1 ? "On" : "Off"));
+  }
+  if (is_passed_reverse_y_) {
+    Arena::SetNodeValue<GenICam::gcstring>(nodemap, "ReverseY",
+                                           reverse_y_ == 1 ? "On" : "Off");
+    log_info(std::string("\tReverse Y set to ") +
+             (reverse_y_ == 1 ? "On" : "Off"));
+  }
 }
 
 // just for debugging

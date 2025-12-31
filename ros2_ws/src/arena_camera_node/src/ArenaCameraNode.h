@@ -116,6 +116,11 @@ class ArenaCameraNode : public rclcpp::Node
 
   bool is_master_{true};
 
+  int reverse_x_{0};
+  bool is_passed_reverse_x_{false};
+  int reverse_y_{0};
+  bool is_passed_reverse_y_{false};
+
   void parse_parameters_();
   void initialize_();
 
@@ -135,6 +140,7 @@ class ArenaCameraNode : public rclcpp::Node
   void set_nodes_binning_();
   void set_nodes_offset_();
   void set_nodes_ptp_();
+  void set_nodes_reverse_();
   void set_nodes_test_pattern_image_();
   void publish_images_();
 
