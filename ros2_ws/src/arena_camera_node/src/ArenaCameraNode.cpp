@@ -281,7 +281,7 @@ void ArenaCameraNode::publish_images_()
       const GenICam::gcstring status = Arena::GetNodeValue<GenICam::gcstring>(
           m_pDevice->GetNodeMap(), "PtpStatus");
       if (status != "Slave") {
-        log_warn("PtpStatus is not Slave: " + status);
+        log_warn("PtpStatus is not Slave: " + status.c_str());
       }
       // log_info(std::string("image ") + std::to_string(pImage->GetFrameId()) +
       //          " published to " + topic_);
