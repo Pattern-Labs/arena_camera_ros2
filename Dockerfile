@@ -1,25 +1,9 @@
-# docker-compose -f "docker-compose.yml" up --build ;  \
-# docker run --rm -it -v ${PWD}:/arena_camera_ros2 arena_camera_ros2_ros2_arena_camera_node_dev:latest
+ARG ROS_DISTRO=jazzy
+ARG ROS_ARCH=amd64
 
 # linux/amd64 only for now
-#https://hub.docker.com/layers/osrf/ros/eloquent-desktop/images/sha256-742948bc521573ff962f5a7f084ba1562a319e547c3938603f8dff5d33d3466e?context=explore
-FROM osrf/ros:eloquent-desktop
-
-
-RUN rm -f /etc/apt/sources.list.d/ros*.list && \
-    rm -f /etc/apt/trusted.gpg.d/ros* || true
-
-
-RUN sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-
-# Disable broken ROS sources before first apt update
-#RUN mv /etc/apt/sources.list.d/ros2-latest.list /etc/apt/sources.list.d/ros2-latest.list.disabled || true && \
-#    rm -f /etc/apt/trusted.gpg.d/ros* && \
-#    apt-get update && apt-get install -y curl gnupg2 lsb-release# Add the updated ROS key and repo using signed-by
-#RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-#    -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-#    echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -sc) main" \
-#    > /etc/apt/sources.list.d/ros2.list
+#https://hub.docker.com/layers/osrf/ros/${ROS_DISTRO}-desktop/images/sha256-742948bc521573ff962f5a7f084ba1562a319e547c3938603f8dff5d33d3466e?context=explore
+FROM ${ROS_ARCH}/ros:${ROS_DISTRO}
 
 
 # Used for install gcc-9 and libstdc++6 required for GLIBCXX_3.4.26 for the ArenaSDK
@@ -32,12 +16,16 @@ RUN apt-get update --allow-insecure-repositories \
     && apt-get install -y --no-install-recommends --allow-unauthenticated \
     git cmake curl wget unzip ninja-build ca-certificates vim xauth \
     gnupg gnupg2 lsb-release openjdk-8-jdk\
-    python3-dev python3-pip python3-numpy python3-matplotlib python3-empy python3-tk \
-#    ros-eloquent-ament-cmake-clang-format \
-#    ros-eloquent-ament-cmake \
+    python3-dev python3-pip python3-numpy python3-matplotlib python3-empy python3-tk python3-full \
+    #    ros-${ROS_DISTRO}-ament-cmake-clang-format \
+    #    ros-${ROS_DISTRO}-ament-cmake \
     gcc-9 libstdc++6 \
-    && apt-get upgrade -y \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get upgrade -y
+
+RUN apt-get update && apt-get install -y \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+    ros-${ROS_DISTRO}-cyclonedds
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 # Add Kitware APT repository for latest CMake
 RUN apt-get update --allow-insecure-repositories && apt-get install -y --no-install-recommends --allow-unauthenticated \
@@ -46,6 +34,12 @@ RUN apt-get update --allow-insecure-repositories && apt-get install -y --no-inst
     apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
     apt-get update && apt-get install -y cmake && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y \
+    libibverbs-dev \
+    librdmacm-dev \
+    libmlx5-1 \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN cmake --version
 # ARGS might want to change ---------------------------------------------------
@@ -91,7 +85,7 @@ RUN /bin/bash -c "export ARENA_ROOT=${arenasdk_root}"
 ADD ${arena_api_root_on_host}/*.whl ${arena_api_parent}/
 
 # install via pip3 all whl files in the arena_api parent dir
-RUN for whl_package in `ls ${arena_api_parent}/*.whl`; do pip3 install $whl_package; done
+RUN for whl_package in `ls ${arena_api_parent}/*.whl`; do pip3 install --break-system-packages $whl_package; done
 
 # setup workspace -------------------------------------------------------------
 
@@ -106,5 +100,8 @@ ADD ./arena_camera_ros_entrypoint.sh /
 
 WORKDIR /arena_camera_ros2/ros2_ws
 COPY ros2_ws/src ros2_ws/src
-RUN ["/bin/bash", "-c", " source /opt/ros/eloquent/setup.bash && colcon build --symlink-install"]
+RUN ["/bin/bash", "-c", " source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build --symlink-install"]
+
+
+ENTRYPOINT [ "/bin/bash", "-c", " source /opt/ros/${ROS_DISTRO}/setup.bash && source ./install/setup.bash && ros2 run arena_camera_node start --ros-args -p binning_selector:=Sensor -p binning_horizontal:=2 -p binning_vertical:=2 -p width:=2280 -p height:=1140" ]
 

@@ -74,7 +74,7 @@ int main(int argc, char** argv)
   client_node->send_request();
   // Wait for the result.
   if (rclcpp::spin_until_future_complete(client_node, client_node->m_result) ==
-      rclcpp::executor::FutureReturnCode::SUCCESS) {
+      rclcpp::FutureReturnCode::SUCCESS) {
     auto response = client_node->m_result.get();
     if (response->success) {
       client_node->log_info(std::string("SUCCESS : ") + response->message);
