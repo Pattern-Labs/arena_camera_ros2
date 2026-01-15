@@ -100,6 +100,7 @@ ADD ./arena_camera_ros_entrypoint.sh /
 
 WORKDIR /arena_camera_ros2/ros2_ws
 COPY ros2_ws/src ros2_ws/src
+COPY cyclonedds.xml /opt/ros/cyclonedds.xml
 RUN ["/bin/bash", "-c", " source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build --symlink-install"]
 
 
